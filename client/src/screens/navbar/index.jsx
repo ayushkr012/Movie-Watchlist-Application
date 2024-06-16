@@ -9,13 +9,14 @@ import {
   FormControl,
   useTheme,
   useMediaQuery,
+  Button,
 } from "@mui/material";
 import { Search, DarkMode, LightMode, Menu, Close } from "@mui/icons-material";
 
 // useDispatch is a hook provided by the React Redux library that allows you to dispatch actions to the Redux store.
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
 
 export default function Navbar() {
@@ -46,16 +47,43 @@ export default function Navbar() {
           onClick={() => navigate("/home")}
           sx={{
             "&:hover": {
-              color:
-                mode == "dark"
-                  ? theme.palette.primary.dark
-                  : theme.palette.primary.dark,
+              color: theme.palette.primary.dark,
               cursor: "pointer",
             },
           }}
         >
-          Movie Watchlist Application
+          Watchlist
         </Typography>
+        <Link
+          to="/watchedMovie"
+          style={{
+            textDecoration: "none",
+            color: mode == "dark" ? "white" : "black",
+          }}
+          sx={{
+            "&:hover": {
+              color: theme.palette.primary.dark,
+              cursor: "pointer",
+            },
+          }}
+        >
+          Watched
+        </Link>
+        <Link
+          to="/unwatchedMovie"
+          style={{
+            textDecoration: "none",
+            color: mode == "dark" ? "white" : "black",
+          }}
+          sx={{
+            "&:hover": {
+              color: theme.palette.primary.dark,
+              cursor: "pointer",
+            },
+          }}
+        >
+          Unwatched
+        </Link>
       </FlexBetween>
 
       {/* DESKTOP NAV */}

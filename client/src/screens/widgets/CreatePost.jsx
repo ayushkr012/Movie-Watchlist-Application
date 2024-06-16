@@ -16,14 +16,14 @@ import {
 } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Dropzone from "react-dropzone";
-import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import Loading from "components/Loading";
 import CloudinaryUploader from "components/CloudinaryUploader";
+import { useNavigate } from "react-router-dom";
 
 // props data came from homePage/index.jsx
 const CreatePost = ({ picturePath }) => {
@@ -43,6 +43,7 @@ const CreatePost = ({ picturePath }) => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
+  const navigate = useNavigate();
   const mode = useSelector((state) => state.mode);
   const primaryColor = palette.primary.main;
 
@@ -120,6 +121,7 @@ const CreatePost = ({ picturePath }) => {
       setGenre("");
       setReleaseYear("");
       setIsLoading(false);
+      navigate("/watchedMovie");
     } catch (error) {
       setIsLoading(false);
       console.error(error);
@@ -420,7 +422,7 @@ const CreatePost = ({ picturePath }) => {
               type="submit"
               sx={{
                 borderRadius: "3rem",
-                backgroundColor: palette.primary.main,
+                backgroundColor: palette.primary.light,
                 // color: palette.common.white,
                 color: "black",
                 "&:hover": {

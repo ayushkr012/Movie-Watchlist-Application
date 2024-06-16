@@ -3,16 +3,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 import PostWidget from "./PostWidget";
 
-// props data came from homePage/index.jsx
-const PostsWidget = ({ userId }) => {
+// props data came from  watched folder for  differentiate the watch and unwatched movies
+const PostsWidget = ({ watchedMovie, unwatchedMovie }) => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
+  const { _id } = useSelector((state) => state.user);
 
   // get all the  post of the user for the movies
   const getPosts = async () => {
     const response = await fetch(
-      `${process.env.REACT_APP_Backend_URL}/posts/${userId}`,
+      `${process.env.REACT_APP_Backend_URL}/posts/${_id}`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },

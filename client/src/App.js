@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import HomePage from "screens/homePage";
 import LoginPage from "screens/loginPage";
 import PostsWidget from "screens/widgets/PostsWidget";
+import Watched from "screens/watchlist";
 //useMemo is a React Hook that lets you cache the result of a calculation between re-renders.
 import { useMemo } from "react";
 // useSelector is a hook provided by React Redux that allows functional components to extract and access data from the Redux store
@@ -23,8 +24,14 @@ function App() {
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/home" element={<HomePage />} />
-            <Route path="/watchedMovie" element={<PostsWidget />} />
-            <Route path="/unwatchedMovie" element={<PostsWidget />} />
+            <Route
+              path="/watchedMovie"
+              element={<Watched watch={true} unwatch={false} />}
+            />
+            <Route
+              path="/unwatchedMovie"
+              element={<Watched unwatch={true} watch={false} />}
+            />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>
