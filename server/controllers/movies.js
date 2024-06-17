@@ -132,3 +132,43 @@ export const updateMovie = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+/* Add Review */
+export const addReview = async (req, res) => {
+  const { postId } = req.params;
+  const { userId, userName, rating, review } = req.body;
+  console.log(req.body);
+
+  // Validate request body
+  if (!userId || !userName || !rating || !review) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    const post = await Movies.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    console.log(post);
+
+    const newReview = {
+      userId,
+      userName,
+      rating,
+      review,
+    };
+
+    post.reviews.push(newReview);
+    await post.save();
+
+    res.status(201).json({
+      message: "Review added successfully!",
+      success: true,
+      updatedPost: post,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

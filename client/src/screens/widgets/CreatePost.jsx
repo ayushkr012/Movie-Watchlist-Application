@@ -14,21 +14,21 @@ import {
   IconButton,
   useMediaQuery,
 } from "@mui/material";
-import FlexBetween from "components/FlexBetween";
+import FlexBetween from "../../components/FlexBetween";
 import Dropzone from "react-dropzone";
-import WidgetWrapper from "components/WidgetWrapper";
+import WidgetWrapper from "../../components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPosts } from "state";
+import { setPosts } from "../../state";
 import { toast } from "react-toastify";
-import Loading from "components/Loading";
-import CloudinaryUploader from "components/CloudinaryUploader";
+import Loading from "../../components/Loading";
+import CloudinaryUploader from "../../components/CloudinaryUploader";
 import { useNavigate } from "react-router-dom";
 
 // props data came from homePage/index.jsx
 const CreatePost = ({ picturePath }) => {
   const dispatch = useDispatch();
-  const [isImage, setIsImage] = useState(false);
+  const [isImage, setIsImage] = useState(true);
   const [isVideo, setIsVideo] = useState(false);
   const [image, setImage] = useState(null);
   const [video, setVideo] = useState(null);
@@ -206,7 +206,7 @@ const CreatePost = ({ picturePath }) => {
             placeholder="Enter release year"
             onChange={(e) => setReleaseYear(e.target.value)}
             value={releaseYear}
-            type="number"
+            type="text"
             sx={{
               width: "100%",
               backgroundColor: palette.background.default,
@@ -430,7 +430,7 @@ const CreatePost = ({ picturePath }) => {
                 },
               }}
             >
-              {isLoading ? <Loading /> : "POST"}
+              {isLoading ? <Loading /> : "ADD"}
             </Button>
           </Box>
         )}

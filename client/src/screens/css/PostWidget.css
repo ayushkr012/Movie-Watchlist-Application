@@ -1,0 +1,38 @@
+.movie-card {
+  max-width: 100%;
+}
+
+.movie-card .card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-img-top {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.card-body {
+  flex-grow: 1;
+}
+
+.description {
+  max-height: 100px; /* Adjust the height as needed */
+  overflow-y: auto;
+}
+
+@media (min-width: 1000px) {
+  .movie-card .card {
+    width: 300px; /* Adjust the width for desktop */
+    height: 450px; /* Adjust the height for desktop */
+  }
+}
+
+@media (max-width: 999px) {
+  .movie-card .card {
+    width: 100%; /* Full width for mobile */
+    height: auto; /* Auto height for mobile */
+  }
+}

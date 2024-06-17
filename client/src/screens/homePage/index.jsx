@@ -1,5 +1,5 @@
 import { Box, useMediaQuery, useTheme } from "@mui/material";
-import Navbar from "screens/navbar";
+import Navbar from  "../navbar";
 import CreatePost from "../widgets/CreatePost";
 import { ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";

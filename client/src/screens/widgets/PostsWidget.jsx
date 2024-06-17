@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPosts } from "state";
+import { setPosts } from "../../state";
 import PostWidget from "./PostWidget";
+import "../css/PostsWidget.css";
 
 // props data came from  watched folder for  differentiate the watch and unwatched movies
 const PostsWidget = ({ watchedMovie, unwatchedMovie }) => {
@@ -28,7 +29,7 @@ const PostsWidget = ({ watchedMovie, unwatchedMovie }) => {
   }, []);
 
   return (
-    <>
+    <div className="posts-container">
       {Array.isArray(posts) &&
         posts.map(
           ({
@@ -56,7 +57,7 @@ const PostsWidget = ({ watchedMovie, unwatchedMovie }) => {
             />
           )
         )}
-    </>
+    </div>
   );
 };
 

@@ -19,20 +19,22 @@ import {
   DialogTitle,
   useMediaQuery,
 } from "@mui/material";
-import FlexBetween from "components/FlexBetween";
-import WidgetWrapper from "components/WidgetWrapper";
+import FlexBetween from "../../components/FlexBetween";
+import WidgetWrapper from "../../components/WidgetWrapper";
 import Dropzone from "react-dropzone";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost, setPosts } from "state";
+import { setPost, setPosts } from "../../state";
 import { toast } from "react-toastify";
-import CloudinaryUploader from "components/CloudinaryUploader";
+import CloudinaryUploader from "../../components/CloudinaryUploader";
+import "../css/PostWidget.css";
+import StarRating from "../../components/StarRating";
 
 const PostWidget = ({
   postId,
   postUserId,
-  imgUrl,
-  videoUrl,
+  imgUrl: initialImgUrl,
+  videoUrl: initialVideoUrl,
   movieTitle: initialMovieTitle,
   releaseYear: initialReleaseYear,
   genre: initialGenre,
@@ -50,22 +52,59 @@ const PostWidget = ({
   const [newReleaseYear, setReleaseYear] = useState(initialReleaseYear);
   const [newGenre, setGenre] = useState(initialGenre);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState("");
+  const [isReview, setIsReview] = useState(false);
 
   // Initialize CloudinaryUploader for save the edited post
   const cloudinaryUploader = CloudinaryUploader();
 
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
-  const loggedInUserId = useSelector((state) => state.user?._id);
+  const { _id, name } = useSelector((state) => state.user);
 
   const main = palette?.neutral?.main;
   const primary = palette?.primary?.main;
 
+  const handleAddReview = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_Backend_URL}/posts/${postId}/addReview`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: _id,
+            userName: name,
+            rating,
+            review,
+          }),
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
+        setPost(data.updatedPost);
+        toast.success("Review added successfully", { autoClose: 1000 });
+        setRating(0);
+        setReview("");
+        isReview(false);
+      } else {
+        toast.error("Failed to add review");
+      }
+    } catch (error) {
+      console.error("Error adding review:", error);
+      toast.error("Error adding review");
+    }
+  };
+
   /* -----------------------------> Edit Post Implementation --------------------------< */
   const handleEditPost = async () => {
     try {
-      let imgUrl = null;
-      let videoUrl = null;
+      let imgUrl = initialImgUrl;
+      let videoUrl = initialVideoUrl;
 
       // Upload image if image is selected
       if (image != null) {
@@ -117,7 +156,7 @@ const PostWidget = ({
 
       if (response.ok) {
         const data = await response.json();
-        dispatch(setPost({ post: data.updatedPost }));
+        dispatch(setPost({ post: data.updatedPost })); // Update the post in the state
         toast.success("Post updated successfully", { autoClose: 1000 });
         setOpenEditModal(false);
         setImage(null);
@@ -169,79 +208,54 @@ const PostWidget = ({
 
   return (
     <WidgetWrapper m="2rem 0">
-      <div className="movie-card">
-        <div className="movie-card card">
-          <img className="card-img-top" src={imgUrl} alt="" />
-          <div className="card-body">
-            <h4 className="card-title">{initialMovieTitle}</h4>
-            <h6 className="card-subtitle mb-2 text-muted">{initialGenre}</h6>
-            <p className="text-justify" style={{ fontSize: "14px" }}>
-              {initialDescription}
-            </p>
-          </div>
-          <div className="card-footer">
-            <div className="clearfix">
-              <div className="float-left mt-1">
-                {/* <StarRating rating={props.movie.rating} /> */}
-              </div>
-              <div className="card-footer-badge float-right badge badge-primary badge-pill">
-                {/* {props.movie.rating} */}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Box className="movie-card">
+        <img
+          className="card-img-top"
+          src={initialImgUrl}
+          alt={initialMovieTitle}
+        />
+        <Box className="card-body">
+          <FlexBetween>
+            <h4 className="card-title">Title: {initialMovieTitle}</h4>
+            <h4 className="card-title">Release Date: {initialReleaseYear}</h4>
+          </FlexBetween>
+          <h4 className="card-subtitle">Genre: {initialGenre}</h4>
+          <p className="description text-justify" 
+          style={{"overflow":"hidden"}}
+          >
+            Description: {initialDescription}
+          </p>
+        </Box>
+      </Box>
 
-      {/* <form>
-        <TextField
-          label="movieTitle"
-          type="text"
-          name="movieTitle"
-          value={newMovieTitle}
-          onChange={(e) => setMovieTitle(e.target.value)}
-          placeholder="Movie Title"
-          margin="normal"
-          fullWidth={!isNonMobileScreens}
-          sx={{ gridColumn: "span 2" }}
-        />
-        <TextField
-          label="releaseYear"
-          type="text"
-          name="releaseYear"
-          value={newReleaseYear}
-          onChange={(e) => setReleaseYear(e.target.value)}
-          placeholder="Release Year"
-          margin="normal"
-          fullWidth={!isNonMobileScreens}
-          sx={{ gridColumn: "span 2" }}
-        />
+      {/* Add Rating and Review Section */}
+      {isReview && (
+        <Box mt="1rem">
+          <StarRating
+            value={rating}
+            onChange={(newValue) => setRating(newValue)}
+          />
+          <TextField
+            label="Add a review"
+            multiline
+            rows={4}
+            variant="outlined"
+            fullWidth
+            value={review}
+            onChange={(e) => setReview(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddReview}
+            disabled={!rating || !review}
+            style={{ marginTop: "1rem" }}
+          >
+            Submit Review
+          </Button>
+        </Box>
+      )}
 
-        <TextField
-          releaseYear
-          label="genre"
-          type="number"
-          name="genre"
-          value={newGenre}
-          onChange={(e) => setGenre(e.target.value)}
-          placeholder="Genre"
-          margin="normal"
-          fullWidth={!isNonMobileScreens}
-          sx={{ gridColumn: "span 2" }}
-        />
-        <TextField
-          label="description"
-          type="text"
-          name="description"
-          value={newDescription}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Description"
-          margin="normal"
-          fullWidth={!isNonMobileScreens}
-          sx={{ gridColumn: "span 2" }}
-        />
-      </form> */}
-
-      {/*  -----------------------> watched and unwatched, Comment and edit Section ----------------------------< */}
       <FlexBetween mt="0.25rem">
         <FlexBetween>
           <FlexBetween>
@@ -251,11 +265,18 @@ const PostWidget = ({
             <IconButton onClick={() => setOpenEditModal(true)}>
               <EditOutlined />
             </IconButton>
+            <Typography
+              color={primary}
+              onClick={() => setIsReview((prev) => !prev)}
+              sx={{ cursor: "pointer" }}
+            >
+              Add a Review
+            </Typography>
           </FlexBetween>
         </FlexBetween>
       </FlexBetween>
 
-      {/* ----------------------->   Edit Post Modal dialog --------------------< */}
+      {/*-----------------------------------> edit Movie dialog  <------------------------------ */}
       <Dialog
         open={openEditModal}
         onClose={() => setOpenEditModal(false)}
@@ -279,7 +300,7 @@ const PostWidget = ({
             padding: "1.5rem 0", // Adjust padding as needed
           }}
         >
-          Update Post
+          Update Movie
         </DialogTitle>
         <Divider
           sx={{
@@ -288,28 +309,54 @@ const PostWidget = ({
           }}
         />
 
-        <Divider
-          sx={{
-            backgroundColor: palette.text.primary,
-            borderTop: `1px solid ${palette.divider}`, // Add a border at the top for separation
-          }}
-        />
         <DialogContent sx={{ backgroundColor: palette.background.alt }}>
-          <InputBase
-            placeholder="What's on your mind..."
-            onChange={(e) => setDescription(e.target.value)}
-            value={newDescription}
-            sx={{
-              width: "100%",
-              backgroundColor: palette.neutral.light,
-              borderRadius: "2rem",
-              padding: "1rem 2rem",
-            }}
-          />
+          <Box display="flex" flexDirection="column" gap="1rem">
+            <TextField
+              label="Movie Title"
+              type="text"
+              name="movieTitle"
+              value={newMovieTitle}
+              onChange={(e) => setMovieTitle(e.target.value)}
+              placeholder="Movie Title"
+              margin="normal"
+              fullWidth
+            />
+            <TextField
+              label="Release Year"
+              type="text"
+              name="releaseYear"
+              value={newReleaseYear}
+              onChange={(e) => setReleaseYear(e.target.value)}
+              placeholder="Release Year"
+              margin="normal"
+              fullWidth
+            />
+            <TextField
+              label="Genre"
+              type="text"
+              name="genre"
+              value={newGenre}
+              onChange={(e) => setGenre(e.target.value)}
+              placeholder="Genre"
+              margin="normal"
+              fullWidth
+            />
+            <TextField
+              label="Description"
+              type="text"
+              name="description"
+              value={newDescription}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Description"
+              margin="normal"
+              fullWidth
+              multiline
+              rows={4}
+            />
+          </Box>
 
           {/* Container for Dropzone and image */}
-          <Box position="relative" width="100%">
-            {/* Dropzone component */}
+          <Box position="relative" width="100%" mt="1rem">
             <Dropzone
               acceptedFiles={["image/*", "video/*"]} // Accept only images and videos
               multiple={false}
@@ -325,128 +372,97 @@ const PostWidget = ({
               }}
             >
               {({ getRootProps, getInputProps }) => (
-                <Box {...getRootProps()} position="relative">
-                  {/* Input for Dropzone */}
+                <Box
+                  {...getRootProps()}
+                  sx={{
+                    border: "2px dashed",
+                    borderColor: palette.primary.main,
+                    borderRadius: "0.75rem",
+                    p: "1rem",
+                    textAlign: "center",
+                    cursor: "pointer",
+                  }}
+                >
                   <input {...getInputProps()} />
-
-                  {/* when newImage are not selected then we display the curernt image or video of the post */}
-                  {!image && !video && (
-                    <div>
-                      {/* if image in the post then we display the image */}
-                      {imgUrl && (
-                        <img
-                          width="100%"
-                          height="auto"
-                          alt="post"
-                          style={{
-                            borderRadius: "0.75rem",
-                            marginTop: "0.75rem",
-                          }}
-                          src={imgUrl}
-                        />
-                      )}
-                      {/* if video in the post then we display the video */}
-                      {videoUrl && (
-                        <video
-                          width="100%"
-                          height="auto"
-                          controls
-                          style={{
-                            borderRadius: "0.75rem",
-                            marginTop: "0.75rem",
-                          }}
-                        >
-                          <source src={videoUrl} />
-                          {/* Optionally, provide fallback content here */}
-                        </video>
-                      )}
-                    </div>
-                  )}
-
-                  {/* display when user select the image */}
-                  {image && (
-                    <img
-                      width="100%"
-                      height="auto"
-                      alt="post"
-                      style={{
-                        borderRadius: "0.75rem",
-                        marginTop: "0.75rem",
-                      }}
-                      src={URL.createObjectURL(image)}
-                    />
-                  )}
-
-                  {/* display when user select the video */}
-                  {video && (
-                    <video
-                      width="100%"
-                      height="auto"
-                      controls
-                      style={{
-                        borderRadius: "0.75rem",
-                        marginTop: "0.75rem",
-                      }}
-                    >
-                      <source src={URL.createObjectURL(video)} />
-                      {/* Optionally, provide fallback content here */}
-                    </video>
-                  )}
-
-                  {/* Render edit icon at the top right corner when image or video is not selected*/}
-                  {!image && !video && (
-                    <IconButton
-                      sx={{
-                        position: "absolute",
-                        top: "0.5rem",
-                        right: "0.5rem",
-                        backgroundColor:
-                          mode === "dark"
-                            ? palette.grey[800]
-                            : palette.grey[200],
-                        borderRadius: "50%",
-                        "&:hover": {
-                          backgroundColor:
-                            mode === "dark"
-                              ? palette.grey[900]
-                              : palette.grey[300],
-                        },
-                        "& .MuiIconButton-label": {
-                          fontSize: "1.5rem",
-                        },
-                      }}
-                    >
-                      <EditOutlined />
-                    </IconButton>
-                  )}
+                  <Typography variant="body1" color="textSecondary">
+                    Drag & drop an image or video, or click to select a file
+                  </Typography>
                 </Box>
               )}
             </Dropzone>
-            {/* Render delete icon if either image or video  is selected */}
-            {(image || video) && (
-              <IconButton
-                onClick={() => {
-                  setImage(null);
-                  setVideo(null);
-                }}
-                sx={{
-                  position: "absolute",
-                  top: "0.5rem",
-                  right: "0.5rem",
-                  backgroundColor:
-                    mode === "dark" ? palette.grey[800] : palette.grey[200],
-                  borderRadius: "50%",
-                  "&:hover": {
-                    backgroundColor:
-                      mode === "dark" ? palette.grey[900] : palette.grey[300],
-                  },
-                  "& .MuiIconButton-label": {
-                    fontSize: "1.5rem",
-                  },
-                }}
-              >
-                <DeleteOutlined />
-              </IconButton>
+
+            {/* Display selected image or video */}
+            {(image || video || initialImgUrl || initialVideoUrl) && (
+              <Box position="relative" mt="1rem">
+                {image ? (
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt="Selected"
+                    style={{
+                      width: "100%",
+                      borderRadius: "0.75rem",
+                    }}
+                  />
+                ) : initialImgUrl ? (
+                  <img
+                    src={initialImgUrl}
+                    alt="Selected"
+                    style={{
+                      width: "100%",
+                      borderRadius: "0.75rem",
+                    }}
+                  />
+                ) : null}
+                {video ? (
+                  <video
+                    width="100%"
+                    height="auto"
+                    controls
+                    style={{
+                      borderRadius: "0.75rem",
+                    }}
+                  >
+                    <source src={URL.createObjectURL(video)} />
+                  </video>
+                ) : initialVideoUrl ? (
+                  <video
+                    width="100%"
+                    height="auto"
+                    controls
+                    style={{
+                      borderRadius: "0.75rem",
+                    }}
+                  >
+                    <source src={initialVideoUrl} />
+                  </video>
+                ) : null}
+
+                {/* Delete button for image or video */}
+                {image || video ? (
+                  <IconButton
+                    onClick={() => {
+                      setImage(null);
+                      setVideo(null);
+                    }}
+                    sx={{
+                      position: "absolute",
+                      top: "0.5rem",
+                      right: "0.5rem",
+                      backgroundColor:
+                        mode === "dark" ? palette.grey[800] : palette.grey[200],
+                      borderRadius: "50%",
+                      "&:hover": {
+                        backgroundColor:
+                          mode === "dark"
+                            ? palette.grey[900]
+                            : palette.grey[300],
+                      },
+                    }}
+                  >
+                    <DeleteOutlined />
+                  </IconButton>
+                ) : null}
+              </Box>
             )}
           </Box>
         </DialogContent>
@@ -471,7 +487,12 @@ const PostWidget = ({
           >
             Cancel
           </Button>
-          {(image || newDescription !== initialDescription || video) && (
+          {(image ||
+            video ||
+            newDescription !== initialDescription ||
+            newMovieTitle !== initialMovieTitle ||
+            newReleaseYear !== initialReleaseYear ||
+            newGenre !== initialGenre) && (
             <Button variant="contained" onClick={handleEditPost}>
               Save
             </Button>
@@ -488,7 +509,7 @@ const PostWidget = ({
         <DialogTitle id="alert-dialog-title">{"Delete Post?"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete this post?
+            Are you sure you want to delete this Movie?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

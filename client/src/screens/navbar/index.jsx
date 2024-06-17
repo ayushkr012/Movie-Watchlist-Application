@@ -15,9 +15,9 @@ import { Search, DarkMode, LightMode, Menu, Close } from "@mui/icons-material";
 
 // useDispatch is a hook provided by the React Redux library that allows you to dispatch actions to the Redux store.
 import { useDispatch, useSelector } from "react-redux";
-import { setMode, setLogout } from "state";
+import { setMode, setLogout } from "../../state";
 import { Link, useNavigate } from "react-router-dom";
-import FlexBetween from "components/FlexBetween";
+import FlexBetween from "../../components/FlexBetween";
 
 export default function Navbar() {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
