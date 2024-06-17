@@ -172,3 +172,29 @@ export const addReview = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+/* Get Movies Details */
+
+export const getMoviesDetails = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    console.log(postId);
+    const post = await Movies.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    res.status(200).json({
+      success: true,
+      imgUrl: post.imgUrl,
+      videoUrl: post.videoUrl,
+      movieTitle: post.movieTitle,
+      releaseYear: post.releaseYear,
+      genre: post.genre,
+      description: post.description,
+      reviews: post.reviews,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

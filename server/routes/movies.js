@@ -6,6 +6,7 @@ import {
   updateMovie,
   watchedUnwatched,
   addReview,
+  getMoviesDetails,
 } from "../controllers/movies.js";
 import { verifyToken } from "../middleware/auth.js";
 const moviesRoutes = express.Router();
@@ -27,4 +28,7 @@ moviesRoutes.delete("/:PostId", verifyToken, deleteMovie);
 
 /* Add Review */
 moviesRoutes.put("/:postId/addReview", verifyToken, addReview);
+
+/*Get Movie  Details */
+moviesRoutes.get("/:postId/getMovieDetails", verifyToken, getMoviesDetails);
 export default moviesRoutes;

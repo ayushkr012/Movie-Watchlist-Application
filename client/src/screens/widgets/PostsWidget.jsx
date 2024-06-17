@@ -42,6 +42,7 @@ const PostsWidget = ({ watchedMovie, unwatchedMovie }) => {
             imgUrl,
             videoUrl,
             watchedUnwatched,
+            reviews,
           }) => (
             <PostWidget
               key={_id}
@@ -54,6 +55,7 @@ const PostsWidget = ({ watchedMovie, unwatchedMovie }) => {
               watchedUnwatched={watchedUnwatched}
               imgUrl={imgUrl}
               videoUrl={videoUrl}
+              reviews={reviews}
             />
           )
         )}

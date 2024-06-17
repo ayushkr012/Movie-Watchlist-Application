@@ -29,7 +29,7 @@ import { toast } from "react-toastify";
 import CloudinaryUploader from "../../components/CloudinaryUploader";
 import "../css/PostWidget.css";
 import StarRating from "../../components/StarRating";
-
+import { useNavigate } from "react-router-dom";
 const PostWidget = ({
   postId,
   postUserId,
@@ -40,6 +40,7 @@ const PostWidget = ({
   genre: initialGenre,
   description: initialDescription,
   watchedUnwatched,
+  reviews,
 }) => {
   const { palette } = useTheme();
   const mode = useSelector((state) => state.mode);
@@ -55,6 +56,7 @@ const PostWidget = ({
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
   const [isReview, setIsReview] = useState(false);
+  const navigate = useNavigate();
 
   // Initialize CloudinaryUploader for save the edited post
   const cloudinaryUploader = CloudinaryUploader();
@@ -206,58 +208,94 @@ const PostWidget = ({
     }
   };
 
+  const handleViewMore = () => {
+    navigate(`/movies/${postId}`);
+  };
+
   return (
     <WidgetWrapper m="2rem 0">
-      <Box className="movie-card">
+      {/* <Box className="movie-card">
         <img
+          style={{
+            width: "100%",
+            height: "70%",
+            objectFit: "cover",
+            borderRadius: "8px",
+          }}
           className="card-img-top"
           src={initialImgUrl}
           alt={initialMovieTitle}
         />
         <Box className="card-body">
           <FlexBetween>
-            <h4 className="card-title">Title: {initialMovieTitle}</h4>
+            <h4 className="card-title">
+              <span style={{ "font-weight": "bold", color: "AppWorkspace" }}>
+                {" "}
+                Movie Title:
+              </span>{" "}
+              {initialMovieTitle}
+            </h4>
             <h4 className="card-title">Release Date: {initialReleaseYear}</h4>
           </FlexBetween>
           <h4 className="card-subtitle">Genre: {initialGenre}</h4>
-          <p className="description text-justify" 
-          style={{"overflow":"hidden"}}
+          <p
+            className="description text-justify"
+            style={{ overflow: "hidden" }}
           >
             Description: {initialDescription}
           </p>
         </Box>
-      </Box>
-
-      {/* Add Rating and Review Section */}
-      {isReview && (
-        <Box mt="1rem">
-          <StarRating
-            value={rating}
-            onChange={(newValue) => setRating(newValue)}
-          />
-          <TextField
-            label="Add a review"
-            multiline
-            rows={4}
-            variant="outlined"
-            fullWidth
-            value={review}
-            onChange={(e) => setReview(e.target.value)}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddReview}
-            disabled={!rating || !review}
-            style={{ marginTop: "1rem" }}
-          >
-            Submit Review
-          </Button>
-        </Box>
-      )}
-
-      <FlexBetween mt="0.25rem">
-        <FlexBetween>
+      </Box> */}
+      <Box
+        className="movie-card"
+        style={{
+          maxWidth: "400px",
+          margin: "0 auto",
+          boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+        }}
+      >
+        <img
+          style={{
+            width: "100%",
+            height: "70%",
+            objectFit: "cover",
+            borderTopLeftRadius: "8px",
+            borderTopRightRadius: "8px",
+          }}
+          className="card-img-top"
+          src={initialImgUrl}
+          alt={initialMovieTitle}
+        />
+        <Box className="card-body" style={{ padding: "20px" }}>
+          <FlexBetween style={{ marginBottom: "10px" }}>
+            <Typography variant="h6" gutterBottom>
+              <span>Movie Title:</span>{" "}
+              <span style={{ color: "#666" }}> {initialMovieTitle}</span>
+            </Typography>
+            <Typography variant="h6" gutterBottom>
+              <span>Release Date:</span>{" "}
+              <span style={{ color: "#666" }}> {initialReleaseYear}</span>
+            </Typography>
+          </FlexBetween>
+          <Typography variant="h6" gutterBottom>
+            <span>Genre:</span>{" "}
+            <span style={{ color: "#666" }}> {initialGenre}</span>
+          </Typography>
+          <Typography style={{ marginTop: "0.5rem" }} variant="h6" gutterBottom>
+            <span>Description:</span>
+            <p
+              className="description text-justify"
+              style={{
+                fontSize: "14px",
+                color: "#666",
+                lineHeight: "1.6",
+                maxHeight: "70px",
+                overflow: "hidden",
+              }}
+            >
+              {initialDescription}:""
+            </p>
+          </Typography>
           <FlexBetween>
             <IconButton onClick={() => setOpenDeleteDialog(true)}>
               <DeleteOutline />
@@ -272,9 +310,82 @@ const PostWidget = ({
             >
               Add a Review
             </Typography>
+
+            <Typography
+              color={primary}
+              onClick={handleViewMore}
+              sx={{ cursor: "pointer" }}
+            >
+              {" "}
+              view more....
+            </Typography>
           </FlexBetween>
-        </FlexBetween>
-      </FlexBetween>
+        </Box>
+      </Box>
+
+      {/* Add Rating and Review Section */}
+
+      <Dialog open={isReview} onClose={() => setIsReview(false)}>
+        <DialogTitle style={{ textAlign: "center" }}>Add a Review</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please enter your rating and review for this movie.
+          </DialogContentText>
+          <Box mt="1rem">
+            <StarRating
+              value={rating}
+              onChange={(newValue) => setRating(newValue)}
+            />
+            <TextField
+              label="Add a review"
+              multiline
+              rows={4}
+              variant="outlined"
+              fullWidth
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsReview(false)} color="secondary">
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddReview}
+            disabled={!rating || !review}
+          >
+            Submit Review
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* <FlexBetween >
+        <IconButton onClick={() => setOpenDeleteDialog(true)}>
+          <DeleteOutline />
+        </IconButton>
+        <IconButton onClick={() => setOpenEditModal(true)}>
+          <EditOutlined />
+        </IconButton>
+        <Typography
+          color={primary}
+          onClick={() => setIsReview((prev) => !prev)}
+          sx={{ cursor: "pointer" }}
+        >
+          Add a Review
+        </Typography>
+
+        <Typography
+          color={primary}
+          onClick={handleViewMore}
+          sx={{ cursor: "pointer" }}
+        >
+          {" "}
+          view more....
+        </Typography>
+      </FlexBetween> */}
 
       {/*-----------------------------------> edit Movie dialog  <------------------------------ */}
       <Dialog

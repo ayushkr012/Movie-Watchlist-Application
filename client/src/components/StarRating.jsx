@@ -2,9 +2,11 @@ import React from "react";
 import { IconButton } from "@mui/material";
 import { Star, StarBorder } from "@mui/icons-material";
 
-const StarRating = ({ value, onChange }) => {
+const StarRating = ({ value, onChange, readOnly = false }) => {
   const handleClick = (newValue) => {
-    onChange(newValue);
+    if (!readOnly) {
+      onChange(newValue);
+    }
   };
 
   return (
@@ -14,6 +16,7 @@ const StarRating = ({ value, onChange }) => {
           key={starValue}
           onClick={() => handleClick(starValue)}
           color={starValue <= value ? "primary" : "default"}
+          // disabled={readOnly}
         >
           {starValue <= value ? <Star /> : <StarBorder />}
         </IconButton>
