@@ -4,14 +4,12 @@ import { setPosts } from "../../state";
 import PostWidget from "./PostWidget";
 import "../css/PostsWidget.css";
 
-// props data came from  watched folder for  differentiate the watch and unwatched movies
 const PostsWidget = ({ watchedMovie, unwatchedMovie }) => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
   const { _id } = useSelector((state) => state.user);
 
-  // get all the  post of the user for the movies
   const getPosts = async () => {
     const response = await fetch(
       `${process.env.REACT_APP_Backend_URL}/posts/${_id}`,
@@ -28,37 +26,46 @@ const PostsWidget = ({ watchedMovie, unwatchedMovie }) => {
     getPosts();
   }, []);
 
+  // Filter posts based on props
+  const filteredPosts = posts.filter((post) => {
+    if (watchedMovie && post.watchedUnwatched) {
+      return true; // Return if watchedMovie is true and post is watched
+    } else if (unwatchedMovie && !post.watchedUnwatched) {
+      return true; // Return if unwatchedMovie is true and post is unwatched
+    }
+    return false; // Default: do not return post
+  });
+
   return (
     <div className="posts-container">
-      {Array.isArray(posts) &&
-        posts.map(
-          ({
-            _id, // id of the post
-            userId,
-            movieTitle,
-            genre,
-            releaseYear,
-            description,
-            imgUrl,
-            videoUrl,
-            watchedUnwatched,
-            reviews,
-          }) => (
-            <PostWidget
-              key={_id}
-              postId={_id}
-              postUserId={userId}
-              movieTitle={movieTitle}
-              description={description}
-              releaseYear={releaseYear}
-              genre={genre}
-              watchedUnwatched={watchedUnwatched}
-              imgUrl={imgUrl}
-              videoUrl={videoUrl}
-              reviews={reviews}
-            />
-          )
-        )}
+      {filteredPosts.map(
+        ({
+          _id,
+          userId,
+          movieTitle,
+          genre,
+          releaseYear,
+          description,
+          imgUrl,
+          videoUrl,
+          watchedUnwatched,
+          reviews,
+        }) => (
+          <PostWidget
+            key={_id}
+            postId={_id}
+            postUserId={userId}
+            movieTitle={movieTitle}
+            description={description}
+            releaseYear={releaseYear}
+            genre={genre}
+            watchedUnwatched={watchedUnwatched}
+            imgUrl={imgUrl}
+            videoUrl={videoUrl}
+            reviews={reviews}
+          />
+        )
+      )}
     </div>
   );
 };

@@ -212,40 +212,33 @@ const PostWidget = ({
     navigate(`/movies/${postId}`);
   };
 
+  const handelWatchedUnwatched = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_Backend_URL}/posts/${postId}/watchedUnwatched`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
+        setPost(data.updatedPost);
+        toast.success("Updated successfully", { autoClose: 1000 });
+      } else {
+        toast.error("Failed to update");
+      }
+    } catch (error) {
+      console.error("Error updating:", error);
+      toast.error("Error updating");
+    }
+  };
+
   return (
     <WidgetWrapper m="2rem 0">
-      {/* <Box className="movie-card">
-        <img
-          style={{
-            width: "100%",
-            height: "70%",
-            objectFit: "cover",
-            borderRadius: "8px",
-          }}
-          className="card-img-top"
-          src={initialImgUrl}
-          alt={initialMovieTitle}
-        />
-        <Box className="card-body">
-          <FlexBetween>
-            <h4 className="card-title">
-              <span style={{ "font-weight": "bold", color: "AppWorkspace" }}>
-                {" "}
-                Movie Title:
-              </span>{" "}
-              {initialMovieTitle}
-            </h4>
-            <h4 className="card-title">Release Date: {initialReleaseYear}</h4>
-          </FlexBetween>
-          <h4 className="card-subtitle">Genre: {initialGenre}</h4>
-          <p
-            className="description text-justify"
-            style={{ overflow: "hidden" }}
-          >
-            Description: {initialDescription}
-          </p>
-        </Box>
-      </Box> */}
       <Box
         className="movie-card"
         style={{
@@ -310,7 +303,6 @@ const PostWidget = ({
             >
               Add a Review
             </Typography>
-
             <Typography
               color={primary}
               onClick={handleViewMore}
@@ -318,6 +310,16 @@ const PostWidget = ({
             >
               {" "}
               view more....
+            </Typography>
+            <Typography
+              onClick={handelWatchedUnwatched}
+              gutterBottom
+              sx={{
+                cursor: "pointer",
+                color: watchedUnwatched ? "red" : "green",
+              }}
+            >
+              {watchedUnwatched ? "unWatched" : "watched"}
             </Typography>
           </FlexBetween>
         </Box>

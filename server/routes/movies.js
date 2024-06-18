@@ -17,9 +17,6 @@ moviesRoutes.post("/createPost", verifyToken, createMovie);
 /* get feedMovies of you watchlist */
 moviesRoutes.get("/:userId", verifyToken, getFeedMovies);
 
-/* Update  the watch and unwathched movies */
-moviesRoutes.patch("/:id/like", verifyToken, watchedUnwatched);
-
 /* Update Movie */
 moviesRoutes.put("/:postId/editPost", verifyToken, updateMovie);
 
@@ -32,3 +29,6 @@ moviesRoutes.put("/:postId/addReview", verifyToken, addReview);
 /*Get Movie  Details */
 moviesRoutes.get("/:postId/getMovieDetails", verifyToken, getMoviesDetails);
 export default moviesRoutes;
+
+/* watch unwathed toggle */
+moviesRoutes.patch("/:postId/watchedUnwatched", verifyToken, watchedUnwatched);

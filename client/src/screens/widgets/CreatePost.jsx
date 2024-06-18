@@ -121,7 +121,7 @@ const CreatePost = ({ picturePath }) => {
       setGenre("");
       setReleaseYear("");
       setIsLoading(false);
-      navigate("/watchedMovie");
+      navigate("/unwatchedMovie");
     } catch (error) {
       setIsLoading(false);
       console.error(error);

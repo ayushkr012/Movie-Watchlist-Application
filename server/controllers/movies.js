@@ -49,9 +49,8 @@ export const getFeedMovies = async (req, res) => {
 /* Update the watched and unwatched the movies */
 export const watchedUnwatched = async (req, res) => {
   try {
-    const { id } = req.params; // id of the post
-    const { userId, postUserId } = req.body;
-    const post = await Movies.findById(id);
+    const { postId } = req.params; // id of the post
+    const post = await Movies.findById(postId);
 
     // here we check if the user already watched the movies or not
     const watchedUnwatched = post.watchedUnwatched;
@@ -69,6 +68,7 @@ export const watchedUnwatched = async (req, res) => {
     await updatedPost.save();
 
     res.status(200).json({
+      success: true,
       updatedPost: updatedPost,
     });
   } catch (error) {
