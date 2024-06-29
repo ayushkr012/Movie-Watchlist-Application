@@ -55,7 +55,7 @@ To get a local copy up and running follow these simple steps.
    ```
 4. Navigate to the frontend directory and create a `.env.local` file for client-side environment variables:
    ```env
-   REACT_APP_CLOUDINARY_API_KEY=687414865223346
+   REACT_APP_CLOUDINARY_API_KEY=your_cloudinary_api_key
    REACT_APP_Backend_URL=http://localhost:3001
    ```
 5. Install frontend dependencies and start the development server
