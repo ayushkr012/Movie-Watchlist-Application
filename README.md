@@ -1,4 +1,3 @@
-
 # Movie Watchlist Application
 
 This is a movie watchlist application built with React.js for the frontend and Node.js/Express.js for the backend. It allows users to manage their movie collections by performing CRUD operations (Create, Read, Update, Delete), rating movies, providing feedback, and viewing detailed movie information.
@@ -19,7 +18,6 @@ This is a movie watchlist application built with React.js for the frontend and N
 - **Cloud Storage**: Cloudinary
 - **Authentication**: Google Authentication (OAuth 2.0)
 - **Email Notifications**: Nodemailer (for sending email notifications)
-
 
 ## Getting Started
 
@@ -53,12 +51,16 @@ To get a local copy up and running follow these simple steps.
    CLOUD_API_KEY=your_cloudinary_api_key
    CLOUDINARY_API_SECRET=your_cloudinary_api_secret
    ```
-4. Navigate to the frontend directory and create a `.env.local` file for client-side environment variables:
+4. start the development server
+   ```sh
+   npm start
+   ```
+5. Navigate to the frontend directory and create a `.env.local` file for client-side environment variables:
    ```env
    REACT_APP_CLOUDINARY_API_KEY=your_cloudinary_api_key
    REACT_APP_Backend_URL=http://localhost:3001
    ```
-5. Install frontend dependencies and start the development server
+6. Install frontend dependencies and start the app
    ```sh
    cd ../client
    npm install
