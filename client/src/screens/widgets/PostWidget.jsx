@@ -309,7 +309,7 @@ const PostWidget = ({
               sx={{ cursor: "pointer" }}
             >
               {" "}
-              view more....
+              view more...
             </Typography>
             <Typography
               onClick={handelWatchedUnwatched}
