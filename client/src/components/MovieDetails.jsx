@@ -67,7 +67,7 @@ const MovieDetails = () => {
   return (
     <>
       <Navbar />
-      <Box p={2} style={{marginLeft:"5%"}}>
+      <Box p={2} style={{ marginLeft: "5%" }}>
         <div style={{ width: "50%", overflow: "hidden", borderRadius: "8px" }}>
           <img
             src={movie.initialImgUrl}
@@ -91,11 +91,11 @@ const MovieDetails = () => {
           <Typography style={{ marginTop: "0.5rem" }} variant="h6" gutterBottom>
             <span>Description:</span>
             <p
-              className="description text-justify"
+              className=" text-justify"
               style={{
                 fontSize: "14px",
                 color: "#666",
-                lineHeight: "1.6",
+                // lineHeight: "1.6",
                 // maxHeight: "70px",
                 // overflow: "hidden",
               }}

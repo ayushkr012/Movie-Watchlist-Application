@@ -92,13 +92,12 @@ const PostWidget = ({
         toast.success("Review added successfully", { autoClose: 1000 });
         setRating(0);
         setReview("");
-        isReview(false);
+        setIsReview(false);
       } else {
         toast.error("Failed to add review");
       }
     } catch (error) {
       console.error("Error adding review:", error);
-      toast.error("Error adding review");
     }
   };
 
